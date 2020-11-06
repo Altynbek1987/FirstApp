@@ -28,7 +28,7 @@ class ChangeActivity : AppCompatActivity() {
         }
     }
     private fun returnData(data: String) {
-        val editdata =edit_change.text.toString().trim()
+        val editdata = edit_change.text.toString().trim()
         if (editdata.isEmpty()){
             //Проверка на пустоту
             inputLayout_change.isErrorEnabled = true
@@ -41,7 +41,5 @@ class ChangeActivity : AppCompatActivity() {
             inputLayout_change.isErrorEnabled = false
             finish()
         }
-
-
     }
 }
