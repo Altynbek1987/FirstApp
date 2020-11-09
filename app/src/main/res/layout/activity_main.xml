@@ -9,12 +9,13 @@
     <TextView
         android:id="@+id/text_text"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:text="MainActivity"
+        android:layout_marginBottom="250dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/inputLayout_main"
@@ -54,10 +55,16 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_main"/>
-    <androidx.recyclerview.widget.RecyclerView
+
+
+    <Button
+        android:id="@+id/btn_open"
+        android:text="Open"
+        android:layout_marginTop="15dp"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toTopOf="parent"/>
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_Show"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

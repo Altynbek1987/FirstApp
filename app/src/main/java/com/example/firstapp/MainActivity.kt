@@ -4,10 +4,9 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.firstapp.extensions.showToast
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.view.*
 import java.util.ArrayList
 
 class MainActivity : AppCompatActivity(){
@@ -18,12 +17,13 @@ class MainActivity : AppCompatActivity(){
         setContentView(R.layout.activity_main)
         sendAction()
         textSave()
+        openPhotoAct()
+
     }
     private fun sendAction(){
         btn_main.setOnClickListener {
             val editdata =edit.text.toString().trim()
             if (editdata.isEmpty()) {
-                //Проверка на пустоту
                 inputLayout_main.isErrorEnabled = true
                 inputLayout_main.error = "error"
                 this.showToast("Введите данные")
@@ -54,4 +54,12 @@ class MainActivity : AppCompatActivity(){
             }
         }
     }
+
+    private fun openPhotoAct(){
+        btn_open.setOnClickListener {
+            var intent = Intent(this,PhotoActivity::class.java)
+            startActivityForResult(intent,0)
+        }
+    }
+
 }
