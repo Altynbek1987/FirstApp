@@ -1,43 +1,35 @@
 package com.example.firstapp
 
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.Intent.ACTION_GET_CONTENT
-import android.content.Intent.ACTION_PICK
-import android.content.pm.PackageManager
-import android.graphics.Color.alpha
-import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.webkit.URLUtil
+import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat
-import com.bumptech.glide.Glide
+import androidx.recyclerview.widget.LinearSnapHelper
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SnapHelper
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.example.firstapp.adapter.PhotoActivityAdapter
-
 import com.example.firstapp.extensions.showToast
 import com.example.firstapp.interf.OnItemClickListener
 import kotlinx.android.synthetic.main.activity_foto.*
 import java.util.*
-import java.util.jar.Manifest
 
-class PhotoActivity : AppCompatActivity(), OnItemClickListener{
+class PhotoActivity() : AppCompatActivity(),OnItemClickListener {
 
     private var listUrlMA = ArrayList<String>()
     private lateinit var adapter: PhotoActivityAdapter
-    private var onItemClickListener = this
-    private val PERMISSION_CODE_READ = 1
-    private val PERMISSION_CODE_WRITE = 2
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_foto)
-        adapter = PhotoActivityAdapter(listUrlMA, this)
+        adapter = PhotoActivityAdapter(listUrlMA,this)
         recyclerView.apply {
             adapter = this@PhotoActivity.adapter
         }
@@ -54,6 +46,9 @@ class PhotoActivity : AppCompatActivity(), OnItemClickListener{
         )
         adapter.add("https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRiKJmJOgkSlJN2uAAnWvk9cvW-0WNSok-JvQ&usqp=CAU")
 
+        var snapHelper = LinearSnapHelper()
+        snapHelper.attachToRecyclerView(recyclerView)
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -66,23 +61,22 @@ class PhotoActivity : AppCompatActivity(), OnItemClickListener{
         return when (item.itemId) {
             R.id.delete_image -> {
                 dialog(position = 0)
+                //adapter.position?.let { dialog(position = it) }
                 true
             }
-            R.id.add_image ->{
-                openGallery()
+            R.id.add_image -> {
+                withEditText()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
-    override fun itemClick(position: Int) {
 
-    }
-    fun dialog(position: Int){
-        val positiveButtonClickListener = {dialog: DialogInterface,which:Int->
-            if (listUrlMA.size==1){
+    fun dialog(position: Int) {
+        val positiveButtonClickListener = { dialog: DialogInterface, which: Int ->
+            if (listUrlMA.size == 1) {
                 this.showToast("Не возможно удалить")
-            }else{
+            } else {
                 adapter.notifyItemRemoved(position)
                 listUrlMA.removeAt(position)
                 adapter.notifyDataSetChanged()
@@ -90,7 +84,7 @@ class PhotoActivity : AppCompatActivity(), OnItemClickListener{
                     .duration(1000)
                     .repeat(0)
                     .playOn(findViewById(R.id.image_holder))
-                var timer = object :CountDownTimer(1000,1000){
+                var timer = object : CountDownTimer(1000, 1000) {
                     override fun onTick(millisUntilFinished: Long) {
                     }
                     override fun onFinish() {
@@ -101,29 +95,51 @@ class PhotoActivity : AppCompatActivity(), OnItemClickListener{
             }
 
         }
-        val negativeButtonClickListener = { dialog: DialogInterface, which:Int->
+        val negativeButtonClickListener = { dialog: DialogInterface, which: Int ->
             this.showToast("Отменен")
         }
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Удаление")
         builder.setMessage("Текущая картинка")
-        builder.setPositiveButton("Ok", DialogInterface.OnClickListener(function = positiveButtonClickListener))
-        builder.setNegativeButton("No", DialogInterface.OnClickListener(negativeButtonClickListener))
+        builder.setPositiveButton(
+            "Ok",
+            DialogInterface.OnClickListener(function = positiveButtonClickListener)
+        )
+        builder.setNegativeButton(
+            "No",
+            DialogInterface.OnClickListener(negativeButtonClickListener)
+        )
         builder.show()
     }
-
-    fun openGallery(){
+    fun openGallery() {
         var intent = Intent(Intent.ACTION_PICK)
         intent.setType("image/*")
         startActivity(intent)
     }
-//    fun saveImage(data:Intent){
-//        if (data !=null && data.clipData !=null){
-//            var url = data.clipData
-//            Glide.with(this).load(url).into(findViewById(R.id.image_holder))
-//        }
-//
-//    }
+
+    fun withEditText() {
+        val builder = AlertDialog.Builder(this)
+        val inflater = layoutInflater
+        builder.setTitle("Add URL HTTPS")
+        val dialogLayout = inflater.inflate(R.layout.layout_dialog, null)
+        val editText = dialogLayout.findViewById<EditText>(R.id.ed_add_url)
+        builder.setView(dialogLayout)
+        builder.setPositiveButton("Add") { dialogInterface, i ->
+            if (editText.text.isNotEmpty() && URLUtil.isHttpsUrl(editText.text.toString())) {
+                listUrlMA.add(editText.text.toString())
+                adapter.notifyDataSetChanged()
+                this.showToast("Add")
+            }else{
+                this.showToast( "Данный урл добавить нельзя, попробуйте добавить url начинающийся с https")
+            }
+        }
+        builder.show()
+    }
+
+    override fun itemClick(position: Int) {
+
+    }
+
 
 
 }
